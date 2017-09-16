@@ -262,6 +262,8 @@ class Player(pygame.sprite.Sprite):
         if self.rect.y >= Basic.SCREEN_HEIGHT - self.rect.height and self.change_y >= 0:
             self.change_y = 0
             self.rect.y = Basic.SCREEN_HEIGHT - self.rect.height
+        elif self.rect.y <= 0:
+            self.rect.top = 0
  
     def jump(self):
         """ Called when user hits 'jump' button. """
@@ -479,7 +481,7 @@ def gen_platforms(x):
             if random.randint(1, 3) == 1:
                 coin = True
 
-        platforms.append([x, y, widht, height])
+        platforms.append([x, y, widht, height, random.randint(0, 10)])
 
     return platforms
 
