@@ -187,10 +187,10 @@ class Player(pygame.sprite.Sprite):
             elif self.change_x < 0:
                 # Otherwise if we are moving left, do the opposite.
                 self.rect.left = block.rect.right
-        """
-        item_hit_list = pygame.sprite.spritecollide(self, self.level.pickup_list, False)
+        
+        item_hit_list = pygame.sprite.spritecollide(self, self.level.coins, False)
         for item in item_hit_list:
-            item.pickup()"""
+            item.pickup()
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
         for enemy in enemy_hit_list:
@@ -464,7 +464,7 @@ def gen_platforms(x):
     widht = random.randint(2, 4)
     height = random.randint(1, 2)
 
-    platforms.append([x, y, widht, height])
+    platforms.append([x, y, widht, height, 10])
 
     coin = False
     for i in range(4):
@@ -474,14 +474,14 @@ def gen_platforms(x):
             x = before[0] + random.randint(int(before[2] / 2), before[2])
         else:
             x = before[0] - random.randint(int(widht / 2), widht)
-        y = before[1] + random.randint(3, 4)
+        y = before[1] + 4
         height = random.randint(1, 2)
 
         if not coin:
             if random.randint(1, 3) == 1:
                 coin = True
 
-        platforms.append([x, y, widht, height, random.randint(0, 10)])
+        platforms.append([x, y, widht, height, random.randint(0, 5)])
 
     return platforms
 
@@ -489,12 +489,14 @@ class Level_():
     def __init__(self, player):
         self.platforms = pygame.sprite.Group() 
         self.monsters = pygame.sprite.Group()
+        self.coins = pygame.sprite.Group()
+        self.texts = pygame.sprite.Group()
         self.player = player
 
         coordinates = []
 
         for i in range(20):
-            coordinates.append(gen_platforms(i*6))
+            coordinates.append(gen_platforms(i*8))
 
         for i in coordinates:
             for j in i:
@@ -504,8 +506,19 @@ class Level_():
 
                 self.platforms.add(platform)
 
+                if j[4] == 0:
+                    coin = Objects.coin()
+                    coin.rect.x = j[0] * 32
+                    coin.rect.y = (Basic.SCREEN_HEIGHT - j[1] * 32) - 40
+                    self.coins.add(coin)
+
         self.world_shift = 0
         self.level_limit = -1000
+
+        self.text = Draw.Text("COINS: 0", 50)
+        self.text.rect.y = Basic.SCREEN_HEIGHT - 50
+        self.texts.add(self.text)
+        self.counter = 0
 
     def shift_world(self, shift_x):
 
@@ -522,8 +535,8 @@ class Level_():
         #for object in self.object_list:
         #    object.rect.x += shift_x
 
-        #for item in self.pickup_list:
-        #    item.rect.x += shift_x
+        for coin in self.coins:
+            coin.rect.x += shift_x
 
         #self.coins.world_shift = self.world_shift
 
@@ -534,6 +547,20 @@ class Level_():
     def draw(self, screen):
         screen.fill((0, 0, 0))
         self.platforms.draw(screen)
+        self.coins.draw(screen)
+        self.texts.draw(screen)
+        
+
+    def update(self):
+        self.text.update()
+        for coin in self.coins:
+            if coin.update():
+                self.counter = self.counter + 1
+                self.text.text_counter("COINS: " + str(self.counter))
+            
+
+        #for coin in self.coins:
+            #coin.update()
 
 
 class Level(object):
@@ -878,7 +905,7 @@ def main():
             
 
         # Update items in the level
-        #current_level.update()
+        level.update()
 
         # Update the player.
         active_sprite_list.update()
