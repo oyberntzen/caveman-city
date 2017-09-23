@@ -30,16 +30,6 @@ class coin(pygame.sprite.Sprite):
 
         self.Coin.append(pygame.transform.flip(self.Coin[2], True, False))
         self.Coin.append(pygame.transform.flip(self.Coin[1], True, False))
-        """
-    def spawn(self):
-        self.visible = True
-
-        self.choiche = random.choice([0, 1, 2, 3])
-        self.coin_place = self.level[self.choiche]
-
-        self.rect.x = (self.coin_place[2] + 100) + self.world_shift
-        self.rect.y = (self.coin_place[3] - 40)
-        """
 
     def update(self):
         self.image.fill(Basic.GREEN)
@@ -115,3 +105,20 @@ class bottun(pygame.sprite.Sprite):
                 self.clicks = False
         else:
             self.clicks = False
+
+class Flag(pygame.sprite.Sprite):
+    def __init__(self, x):
+
+        super().__init__()
+
+        self.flag = pygame.image.load("Textures\\flag.png")
+        self.image = pygame.Surface((36, 77))
+
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = Basic.SCREEN_HEIGHT - 77
+
+        self.image.fill(Basic.GREEN)
+        self.image.set_colorkey(Basic.GREEN)
+
+        self.image.blit(self.flag, (0, 0), (1, 3, 36, 77))        
