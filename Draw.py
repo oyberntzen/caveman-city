@@ -49,7 +49,8 @@ class Text(pygame.sprite.Sprite):
         self.Alphabet["9"] = [70, 9, 7, 9]   #9
 
         self.Alphabet[":"] = [1, 18, 4, 8]
-        self.Alphabet["."] = [99, 1, 4, 7]
+        self.Alphabet["."] = [99, 0, 4, 7]
+        self.Alphabet["-"] = [92, 0, 6, 6]
 
         self.lenght = len(text)
         self.width = self.lenght * size

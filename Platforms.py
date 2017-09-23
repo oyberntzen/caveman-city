@@ -106,3 +106,26 @@ class MovingPlatform(Platform):
         cur_pos = self.rect.x - self.level.world_shift
         if cur_pos < self.boundary_left or cur_pos > self.boundary_right:
             self.change_x *= -1
+
+class Lava(pygame.sprite.Sprite):
+    def __init__(self, x, length):
+        super().__init__()
+
+        spritesheet = pygame.image.load("Textures\\lava_spr_strip45.png")
+
+        self.lava = pygame.surface.Surface((16, 16))
+
+        self.images = []
+        for i in range(45):
+            self.lava.blit(spritesheet, (0, 0), (i * 16, 0, 16, 16))
+            self.images.append(self.lava.copy())
+
+        self.image = pygame.surface.Surface((length, 16))
+
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = Basic.SCREEN_HEIGHT - 16
+
+        for i in range(int(length / 16)):
+            self.image.blit(self.images[0], (i * 16, 0))

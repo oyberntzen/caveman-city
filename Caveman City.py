@@ -114,6 +114,8 @@ class Player(pygame.sprite.Sprite):
 
         self.done = False
 
+        self.fire = False
+
     def update(self):
 
         self.calc_grav()
@@ -178,6 +180,11 @@ class Player(pygame.sprite.Sprite):
         flag_hit_list = pygame.sprite.spritecollide(self, self.level.objects, False)
         for i in flag_hit_list:
             self.done = True
+
+        lava_hit_list = pygame.sprite.spritecollide(self, self.level.lavas, False)
+        for i in lava_hit_list:
+            self.fire = True
+            self.change_y = -10
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
         for enemy in enemy_hit_list:
@@ -466,6 +473,7 @@ class Level():
         self.coins = pygame.sprite.Group()
         self.texts = pygame.sprite.Group()
         self.objects = pygame.sprite.Group()
+        self.lavas = pygame.sprite.Group()
         self.player = player
 
         coordinates = []
@@ -500,12 +508,12 @@ class Level():
         self.flag = Objects.Flag(self.end_point)
         self.objects.add(self.flag)
 
+        lava = Platforms.Lava(offset + 64, 20 * 8 * 32 - 64)
+        self.lavas.add(lava)
+
         self.world_shift = 0
         self.level_limit = -1000
 
-        self.text = Draw.Text("COINS: 0", 50)
-        self.text.rect.y = Basic.SCREEN_HEIGHT - 50
-        self.texts.add(self.text)
         self.counter = 0
 
     def shift_world(self, shift_x):
@@ -526,11 +534,15 @@ class Level():
         for object in self.objects:
             object.rect.x += shift_x
 
+        for lava in self.lavas:
+            lava.rect.x += shift_x
+
     def draw(self, screen):
         self.platforms.draw(screen)
         self.coins.draw(screen)
         self.texts.draw(screen)
         self.objects.draw(screen)
+        self.lavas.draw(screen)
         
 
     def update(self):
@@ -538,7 +550,6 @@ class Level():
         for coin in self.coins:
             if coin.update():
                 self.counter = self.counter + 1
-                self.text.text_counter("COINS: " + str(self.counter))
 
 def main():
 
@@ -578,6 +589,10 @@ def main():
 
     clock = pygame.time.Clock()
 
+    ekstra_time = 0
+    fire_time = 0
+    splash = pygame.mixer.Sound("Textures\\lava.flac")
+
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -607,9 +622,16 @@ def main():
 
         active_sprite_list.update()
 
+        now_time = time.time()
+
+        if player.fire:
+            player.fire = False
+            pygame.mixer.Sound.play(splash)
+            ekstra_time += 7
+            
+
         if not player.done:
-            now_time = time.time()
-            text.text_counter("TIME: " + str(int(now_time - start_time)))
+            text.text_counter("TIME: " + str(int(now_time - start_time - level.counter * 5 + ekstra_time)))
 
         if player.rect.right >= (Basic.SCREEN_WIDTH - 200):
             diff = player.rect.right - (Basic.SCREEN_WIDTH - 200)
