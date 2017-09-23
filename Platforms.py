@@ -111,6 +111,8 @@ class Lava(pygame.sprite.Sprite):
     def __init__(self, x, length):
         super().__init__()
 
+        self.length = length
+
         spritesheet = pygame.image.load("Textures\\lava_spr_strip45.png")
 
         self.lava = pygame.surface.Surface((16, 16))
@@ -127,5 +129,15 @@ class Lava(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = Basic.SCREEN_HEIGHT - 16
 
-        for i in range(int(length / 16)):
+        self.counter = 0
+
+        for i in range(int(self.length / 16)):
             self.image.blit(self.images[0], (i * 16, 0))
+    
+    def update(self):
+        self.counter = self.counter + 0.5
+        if self.counter >= 45:
+            self.counter = 0
+        for i in range(int(self.length / 16)):
+            self.image.blit(self.images[int(self.counter)], (i * 16, 0))
+        

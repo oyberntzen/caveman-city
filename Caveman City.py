@@ -547,6 +547,7 @@ class Level():
 
     def update(self):
         self.texts.update()
+        self.lavas.update()
         for coin in self.coins:
             if coin.update():
                 self.counter = self.counter + 1
@@ -627,7 +628,7 @@ def main():
         if player.fire:
             player.fire = False
             pygame.mixer.Sound.play(splash)
-            ekstra_time += 7
+            ekstra_time += 5
             
 
         if not player.done:
