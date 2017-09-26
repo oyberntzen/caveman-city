@@ -5,6 +5,7 @@ import Draw
 import random
 import time
 import pygame
+import Monster1
 
 
 class Player(pygame.sprite.Sprite):
@@ -366,7 +367,6 @@ class Monster1(pygame.sprite.Sprite):
         self.world_shift = 0
         
         self.die = False
-        self.timer = 0
         self.picture = 0
     
         self.attack_frames = 0
@@ -412,23 +412,9 @@ class Monster1(pygame.sprite.Sprite):
             self.image.blit(self.die_texture[int(self.picture)], (0, 0))
             self.picture += 0.2
 
-        if int(time.time() - self.timer) == 20 and self.die:
-            self.die = False
-            
-            self.timer = 0
-            self.pos()
-
-    def pos(self):
-        self.platform = self.level[random.choice([0, 1, 2, 3])]
-
-        self.rect.x = (self.platform[2] + 1) + self.world_shift
-        self.rect.y = (self.platform[3] - self.height)
-
     def dies(self):
         self.die = True
         
-
-        self.timer = time.time()
         self.picture = 0
 
         self.image.fill(Basic.GREEN)
@@ -445,9 +431,8 @@ def gen_platforms(x):
     widht = random.randint(2, 4)
     height = random.randint(1, 2)
 
-    platforms.append([x, y, widht, height, 10])
+    platforms.append([x, y, widht, height, 10, random.randint(0, 10)])
 
-    coin = False
     for i in range(4):
         before = platforms[i]
         widht = random.randint(2, 4)
@@ -458,11 +443,7 @@ def gen_platforms(x):
         y = before[1] + 4
         height = random.randint(1, 2)
 
-        if not coin:
-            if random.randint(1, 3) == 1:
-                coin = True
-
-        platforms.append([x, y, widht, height, random.randint(0, 5)])
+        platforms.append([x, y, widht, height, random.randint(0, 5), random.randint(0, 10)])
 
     return platforms
 
@@ -496,6 +477,15 @@ class Level():
                     coin.rect.x = j[0] * 32 + offset
                     coin.rect.y = (Basic.SCREEN_HEIGHT - j[1] * 32) - 40
                     self.coins.add(coin)
+
+                if j[5] == 0:
+                    monster = Monster1()
+                    monster.platform = [j[2], j[3], j[0] * 32, j[1] * 32]
+
+                    monster.rect.x = monster.platform[2] + 1
+                    monster.rect.y = monster.platform[3] - 72
+
+                    self.monsters.add(monster)
 
         platform = Platforms.Platform(64, Basic.SCREEN_HEIGHT, False)
         platform.rect.x = 0
@@ -543,11 +533,13 @@ class Level():
         self.texts.draw(screen)
         self.objects.draw(screen)
         self.lavas.draw(screen)
+        self.monsters.draw(screen)
         
 
     def update(self):
         self.texts.update()
         self.lavas.update()
+        self.monsters.update()
         for coin in self.coins:
             if coin.update():
                 self.counter = self.counter + 1
@@ -592,7 +584,9 @@ def main():
 
     ekstra_time = 0
     fire_time = 0
-    splash = pygame.mixer.Sound("Textures\\lava.flac")
+    splash = pygame.mixer.Sound("Textures\\lava.wav")
+
+    Time = 60
 
     while not done:
         for event in pygame.event.get():
@@ -632,7 +626,8 @@ def main():
             
 
         if not player.done:
-            text.text_counter("TIME: " + str(int(now_time - start_time - level.counter * 5 + ekstra_time)))
+            Time = int(60 - (now_time - start_time - level.counter * 5 + ekstra_time))
+            text.text_counter("TIME: " + str(Time))
 
         if player.rect.right >= (Basic.SCREEN_WIDTH - 200):
             diff = player.rect.right - (Basic.SCREEN_WIDTH - 200)
