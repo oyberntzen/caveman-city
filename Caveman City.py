@@ -5,7 +5,6 @@ import Draw
 import random
 import time
 import pygame
-import Monster1
 
 
 class Player(pygame.sprite.Sprite):
@@ -186,7 +185,7 @@ class Player(pygame.sprite.Sprite):
         for i in lava_hit_list:
             self.fire = True
             self.change_y = -10
-
+        """
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
         for enemy in enemy_hit_list:
             if not enemy.die:
@@ -217,6 +216,7 @@ class Player(pygame.sprite.Sprite):
                     self.money = True
 
         self.bar.lives = self.lives
+        """
 
         self.rect.y += self.change_y
 
@@ -424,6 +424,57 @@ class Monster1(pygame.sprite.Sprite):
         self.attack_frames = 6
         self.state = state
 
+class Monster(pygame.sprite.Sprite):
+    def __init__(self, platform):
+
+        super().__init__()
+
+        
+        self.monster = Basic.SpriteSheet("Textures//monster.png")
+
+        self.widht = 64
+        self.height = 72
+
+        self.image = pygame.Surface((self.widht, self.height))
+
+        self.rect = self.image.get_rect()
+
+        self.go_texture = []
+        self.die_texture = []
+        self.attack_texture = []
+
+        self.go_texture.append(pygame.transform.scale(self.monster.get_image(19, 82, 32, 36), (self.widht, self.height)))
+        self.go_texture.append(pygame.transform.scale(self.monster.get_image(85, 82, 32, 36), (self.widht, self.height)))
+        self.go_texture.append(pygame.transform.scale(self.monster.get_image(148, 82, 32, 36), (self.widht, self.height)))
+        self.go_texture.append(pygame.transform.scale(self.monster.get_image(212, 82, 32, 36), (self.widht, self.height)))
+        self.go_texture.append(pygame.transform.scale(self.monster.get_image(276, 82, 32, 36), (self.widht, self.height)))
+
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(19, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(81, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(143, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(206, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(271, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(343, 210, 32, 36), (self.widht, self.height)))
+        self.die_texture.append(pygame.transform.scale(self.monster.get_image(412, 210, 32, 36), (self.widht, self.height)))
+
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(19, 146, 32, 36), (self.widht, self.height)))
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(83, 146, 32, 36), (self.widht, self.height)))
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(148, 146, 32, 36), (self.widht, self.height)))
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(212, 146, 32, 36), (self.widht, self.height)))
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(276, 146, 32, 36), (self.widht, self.height)))
+        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(339, 146, 32, 36), (self.widht, self.height)))
+        
+        self.dir = "right"
+
+        self.platform = platform
+
+    def set_pos(self):
+        self.rect.x = self.platform[0]
+        self.rect.y = self.platform[1] - self.height
+
+    def update(self):
+        self.image.blit(self.go_texture[0], (0, 0))
+
 def gen_platforms(x):
     platforms = []
 
@@ -471,6 +522,9 @@ class Level():
                 platform.rect.y = Basic.SCREEN_HEIGHT - j[1] * 32
 
                 self.platforms.add(platform)
+                monster = Monster([j[0] * 32 + offset, Basic.SCREEN_HEIGHT - j[1] * 32, j[2] * 32, j[3] * 32])
+                monster.set_pos()
+                self.monsters.add(monster)
 
                 if j[4] == 0:
                     coin = Objects.coin()
@@ -478,18 +532,11 @@ class Level():
                     coin.rect.y = (Basic.SCREEN_HEIGHT - j[1] * 32) - 40
                     self.coins.add(coin)
 
-                if j[5] == 0:
-                    monster = Monster1()
-                    monster.platform = [j[2], j[3], j[0] * 32, j[1] * 32]
-
-                    monster.rect.x = monster.platform[2] + 1
-                    monster.rect.y = monster.platform[3] - 72
-
-                    self.monsters.add(monster)
-
         platform = Platforms.Platform(64, Basic.SCREEN_HEIGHT, False)
         platform.rect.x = 0
         platform.rect.y = 0
+
+        
 
         self.platforms.add(platform)
 
@@ -518,8 +565,8 @@ class Level():
         for coin in self.coins:
             coin.rect.x += shift_x
 
-        for enemy in self.monsters:
-            enemy.world_shift = self.world_shift
+        #for enemy in self.monsters:
+            #enemy.world_shift = self.world_shift
 
         for object in self.objects:
             object.rect.x += shift_x
