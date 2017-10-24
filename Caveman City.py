@@ -439,6 +439,8 @@ class Monster(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
+        self.change_x = random.randint(5, 20) / 5
+
         self.go_texture = []
         self.die_texture = []
         self.attack_texture = []
@@ -468,12 +470,36 @@ class Monster(pygame.sprite.Sprite):
 
         self.platform = platform
 
+        self.go_frames = random.randint(0, 4)
+
+        self.shift_x = 0
+
     def set_pos(self):
         self.rect.x = self.platform[0]
         self.rect.y = self.platform[1] - self.height
 
     def update(self):
-        self.image.blit(self.go_texture[0], (0, 0))
+        self.image.fill(Basic.GREEN)
+        self.image.set_colorkey(Basic.GREEN)
+
+        if self.platform[2] > 64:
+            self.go_frames += 0.1
+            if int(self.go_frames) >= 5:
+                self.go_frames = 0
+
+        if self.change_x > 0:
+            if self.rect.x + self.widht >= self.platform[0] + self.platform[2] + self.shift_x:
+                self.change_x = -1
+
+        if self.change_x < 0:
+            if self.rect.x <= self.platform[0] + self.shift_x:
+                self.change_x = 1
+        
+        if self.platform[2] > 64:
+            self.rect.x += self.change_x
+        
+        self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+        print(self.shift_x)
 
 def gen_platforms(x):
     platforms = []
@@ -561,12 +587,10 @@ class Level():
  
         for enemy in self.monsters:
             enemy.rect.x += shift_x
+            enemy.shift_x = self.world_shift
 
         for coin in self.coins:
             coin.rect.x += shift_x
-
-        #for enemy in self.monsters:
-            #enemy.world_shift = self.world_shift
 
         for object in self.objects:
             object.rect.x += shift_x
