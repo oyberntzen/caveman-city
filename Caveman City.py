@@ -218,6 +218,18 @@ class Player(pygame.sprite.Sprite):
         self.bar.lives = self.lives
         """
 
+        enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
+        for enemy in enemy_hit_list:
+            if self.change_y > 0:
+                self.change_y = -10
+            else:
+                if self.rect.x > enemy.rect.x:
+                    self.back = 15
+                    self.change_y = -5
+                elif self.rect.x < enemy.rect.x:
+                    self.back = -15
+                    self.change_y = -5
+
         self.rect.y += self.change_y
 
         if self.back > 0:
@@ -499,7 +511,6 @@ class Monster(pygame.sprite.Sprite):
             self.rect.x += self.change_x
         
         self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
-        print(self.shift_x)
 
 def gen_platforms(x):
     platforms = []
@@ -655,7 +666,7 @@ def main():
 
     ekstra_time = 0
     fire_time = 0
-    splash = pygame.mixer.Sound("Textures\\lava.wav")
+    splash = pygame.mixer.Sound("Textures\\lava.flac")
 
     Time = 60
 

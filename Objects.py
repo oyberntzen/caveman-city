@@ -12,7 +12,6 @@ class coin(pygame.sprite.Sprite):
         self.visible = True
         self.level = []
         self.picknow = False
-        #self.world_shift = 0
 
         self.image = pygame.Surface([width, height])
         self.rect = self.image.get_rect()
