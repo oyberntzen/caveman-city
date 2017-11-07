@@ -105,12 +105,7 @@ class Player(pygame.sprite.Sprite):
  
         self.level = None
 
-        self.bar = Health()
-        self.lives = 200
-
         self.back = 0
-
-        self.money = False
 
         self.done = False
 
@@ -166,7 +161,6 @@ class Player(pygame.sprite.Sprite):
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platforms, False)
         for block in block_hit_list:
             self.back = 0
-            self.enemy_limit = 0
 
             if self.change_x > 0:
                 self.rect.right = block.rect.left
@@ -220,15 +214,19 @@ class Player(pygame.sprite.Sprite):
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
         for enemy in enemy_hit_list:
-            if self.change_y > 0:
-                self.change_y = -10
-            else:
-                if self.rect.x > enemy.rect.x:
-                    self.back = 15
-                    self.change_y = -5
-                elif self.rect.x < enemy.rect.x:
-                    self.back = -15
-                    self.change_y = -5
+            if enemy.live:
+                if self.change_y > 1:
+                    self.change_y = -10
+                    enemy.lives -= 1
+                    if enemy.lives == 0:
+                        enemy.die()
+                else:
+                    if self.rect.x > enemy.rect.x:
+                        self.back = 15
+                        self.change_y = -5
+                    elif self.rect.x < enemy.rect.x:
+                        self.back = -15
+                        self.change_y = -5
 
         self.rect.y += self.change_y
 
@@ -244,8 +242,9 @@ class Player(pygame.sprite.Sprite):
             self.back = 0
 
             if self.change_y > 0:
-                self.enemy_limit = 0
                 self.rect.bottom = block.rect.top
+                for monster in self.level.monsters:
+                    monster.lives = 3
             elif self.change_y < 0:
                 self.rect.top = block.rect.bottom
 
@@ -322,11 +321,7 @@ class Health(pygame.sprite.Sprite):
     def update(self):
         self.image.blit(self.list[0], (0, 0))
 
-        if self.lives < 200:
-            pygame.draw.rect(self.image, Basic.GREEN, (self.lives + 1, 1, 200 - self.lives, 17))
-
-
-
+"""
 class Monster1(pygame.sprite.Sprite):
     def __init__(self):
 
@@ -435,6 +430,7 @@ class Monster1(pygame.sprite.Sprite):
     def attack(self, state):
         self.attack_frames = 6
         self.state = state
+"""
 
 class Monster(pygame.sprite.Sprite):
     def __init__(self, platform):
@@ -452,6 +448,8 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.change_x = random.randint(5, 20) / 5
+
+        self.lives = 3
 
         self.go_texture = []
         self.die_texture = []
@@ -486,6 +484,8 @@ class Monster(pygame.sprite.Sprite):
 
         self.shift_x = 0
 
+        self.live = True
+
     def set_pos(self):
         self.rect.x = self.platform[0]
         self.rect.y = self.platform[1] - self.height
@@ -494,23 +494,28 @@ class Monster(pygame.sprite.Sprite):
         self.image.fill(Basic.GREEN)
         self.image.set_colorkey(Basic.GREEN)
 
-        if self.platform[2] > 64:
-            self.go_frames += 0.1
-            if int(self.go_frames) >= 5:
-                self.go_frames = 0
+        if self.live:
+            if self.platform[2] > 64:
+                self.go_frames += 0.1
+                if int(self.go_frames) >= 5:
+                    self.go_frames = 0
 
-        if self.change_x > 0:
-            if self.rect.x + self.widht >= self.platform[0] + self.platform[2] + self.shift_x:
-                self.change_x = -1
+            if self.change_x > 0:
+                if self.rect.x + self.widht >= self.platform[0] + self.platform[2] + self.shift_x:
+                    self.change_x = -1
 
-        if self.change_x < 0:
-            if self.rect.x <= self.platform[0] + self.shift_x:
-                self.change_x = 1
+            if self.change_x < 0:
+                if self.rect.x <= self.platform[0] + self.shift_x:
+                    self.change_x = 1
         
-        if self.platform[2] > 64:
-            self.rect.x += self.change_x
+            if self.platform[2] > 64:
+                self.rect.x += self.change_x
         
-        self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+            self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+
+    def die(self):
+        self.live = False
+        print(self.live)
 
 def gen_platforms(x):
     platforms = []
@@ -535,7 +540,7 @@ def gen_platforms(x):
 
     return platforms
 
-class Level():
+class Level(): 
     def __init__(self, player):
         self.platforms = pygame.sprite.Group() 
         self.monsters = pygame.sprite.Group()
@@ -559,9 +564,11 @@ class Level():
                 platform.rect.y = Basic.SCREEN_HEIGHT - j[1] * 32
 
                 self.platforms.add(platform)
-                monster = Monster([j[0] * 32 + offset, Basic.SCREEN_HEIGHT - j[1] * 32, j[2] * 32, j[3] * 32])
-                monster.set_pos()
-                self.monsters.add(monster)
+
+                if j[5] == 0:
+                    monster = Monster([j[0] * 32 + offset, Basic.SCREEN_HEIGHT - j[1] * 32, j[2] * 32, j[3] * 32])
+                    monster.set_pos()
+                    self.monsters.add(monster)
 
                 if j[4] == 0:
                     coin = Objects.coin()
@@ -666,7 +673,7 @@ def main():
 
     ekstra_time = 0
     fire_time = 0
-    splash = pygame.mixer.Sound("Textures\\lava.flac")
+    splash = pygame.mixer.Sound("Textures\\lava.wav")
 
     Time = 60
 
