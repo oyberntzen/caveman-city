@@ -529,12 +529,28 @@ def gen_platforms(x):
     for i in range(4):
         before = platforms[i]
         widht = random.randint(2, 4)
-        if i % 2 == 0:
-            x = before[0] + random.randint(int(before[2] / 2), before[2])
+
+        if before[5] == 0:
+            place = True
         else:
-            x = before[0] - random.randint(int(widht / 2), widht)
+            place = True
+
+        if i % 2 == 0:
+            if place:
+                x = before[0] + before[2]
+            else:
+                x = before[0] + random.randint(int(before[2] / 2), before[2])
+        else:
+            if place:
+                x = before[0] - widht
+            else:
+                x = before[0] - random.randint(int(widht / 2), widht)
+            
         y = before[1] + 4
-        height = random.randint(1, 2)
+        if place:
+            height = 1
+        else:
+            height = random.randint(1, 2)
 
         platforms.append([x, y, widht, height, random.randint(0, 5), random.randint(0, 10)])
 
