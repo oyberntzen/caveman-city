@@ -179,48 +179,21 @@ class Player(pygame.sprite.Sprite):
         for i in lava_hit_list:
             self.fire = True
             self.change_y = -10
-        """
-        enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
-        for enemy in enemy_hit_list:
-            if not enemy.die:
-                if self.change_y > 1:
-                    self.change_y = -10
-                    self.enemy_limit += 1
-                    if self.enemy_limit < 3:
-                        pygame.mixer.Sound.play(self.punch_sound)
-                    else:
-                        pygame.mixer.Sound.play(self.die_sound)
-                elif not self.lives == 0:
-                    self.lives -= 20
-                    pygame.mixer.Sound.play(self.hit_sound)
-                    if self.rect.x > enemy.rect.x:
-                        enemy.attack(True)
-                    else:
-                        enemy.attack(False)
-
-                    if self.rect.x > enemy.rect.x:
-                        self.back = 15
-                        self.change_y = -5
-                    elif self.rect.x < enemy.rect.x:
-                        self.back = -15
-                        self.change_y = -5
-
-                if self.enemy_limit == 3:
-                    enemy.dies()
-                    self.money = True
-
-        self.bar.lives = self.lives
-        """
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.monsters, False)
         for enemy in enemy_hit_list:
             if enemy.live:
-                if self.change_y > 1:
+                if self.rect.y + 50 < enemy.rect.y:
                     self.change_y = -10
-                    enemy.lives -= 1
-                    if enemy.lives == 0:
+                    enemy.hit()
+                    pygame.mixer.Sound.play(self.punch_sound)
+                    if enemy.lifes == 0:
+                        pygame.mixer.Sound.play(self.die_sound)
                         enemy.die()
                 else:
+                    pygame.mixer.Sound.play(self.hit_sound)
+                    dir = self.rect.x < enemy.rect.x
+                    enemy.attack(dir)
                     if self.rect.x > enemy.rect.x:
                         self.back = 15
                         self.change_y = -5
@@ -244,7 +217,7 @@ class Player(pygame.sprite.Sprite):
             if self.change_y > 0:
                 self.rect.bottom = block.rect.top
                 for monster in self.level.monsters:
-                    monster.lives = 3
+                    monster.lifes = 3
             elif self.change_y < 0:
                 self.rect.top = block.rect.bottom
 
@@ -296,142 +269,6 @@ class Player(pygame.sprite.Sprite):
         if self.extra == 4:
             self.extra = 1
 
-class Health(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-
-        self.spritesheet = Basic.SpriteSheet("Textures\\Health.png")
-        self.image = pygame.Surface((202, 19))
-        self.image.fill(Basic.GREEN)
-        self.image.set_colorkey(Basic.GREEN)
-
-        self.list = []
-
-        self.lives = 0
-
-        self.rect = self.image.get_rect()
-
-        self.list.append(pygame.transform.scale(self.spritesheet.get_image(0, 0, 182, 17), (202, 19)))
-
-        self.rect.x = Basic.SCREEN_WIDTH - 202
-        self.rect.y = Basic.SCREEN_HEIGHT - 19
-
-        self.image.blit(self.list[0], (0, 0))
-
-    def update(self):
-        self.image.blit(self.list[0], (0, 0))
-
-"""
-class Monster1(pygame.sprite.Sprite):
-    def __init__(self):
-
-        super().__init__()
-
-        
-        self.monster = Basic.SpriteSheet("Textures//monster.png")
-
-        self.widht = 64
-        self.height = 72
-
-        self.image = pygame.Surface((self.widht, self.height))
-
-        self.rect = self.image.get_rect()
-
-        self.go_texture = []
-        self.die_texture = []
-        self.attack_texture = []
-
-        self.go_texture.append(pygame.transform.scale(self.monster.get_image(19, 82, 32, 36), (self.widht, self.height)))
-        self.go_texture.append(pygame.transform.scale(self.monster.get_image(85, 82, 32, 36), (self.widht, self.height)))
-        self.go_texture.append(pygame.transform.scale(self.monster.get_image(148, 82, 32, 36), (self.widht, self.height)))
-        self.go_texture.append(pygame.transform.scale(self.monster.get_image(212, 82, 32, 36), (self.widht, self.height)))
-        self.go_texture.append(pygame.transform.scale(self.monster.get_image(276, 82, 32, 36), (self.widht, self.height)))
-
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(19, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(81, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(143, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(206, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(271, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(343, 210, 32, 36), (self.widht, self.height)))
-        self.die_texture.append(pygame.transform.scale(self.monster.get_image(412, 210, 32, 36), (self.widht, self.height)))
-
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(19, 146, 32, 36), (self.widht, self.height)))
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(83, 146, 32, 36), (self.widht, self.height)))
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(148, 146, 32, 36), (self.widht, self.height)))
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(212, 146, 32, 36), (self.widht, self.height)))
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(276, 146, 32, 36), (self.widht, self.height)))
-        self.attack_texture.append(pygame.transform.scale(self.monster.get_image(339, 146, 32, 36), (self.widht, self.height)))
-        
-
-        self.direction = True
-
-        self.frames = 0.0
-
-        self.rect.x = 0
-        self.rect.y = 0
-
-        self.level = []
-        self.world_shift = 0
-        
-        self.die = False
-        self.picture = 0
-    
-        self.attack_frames = 0
-        self.state = False
-
-    def update(self):
-        self.image.fill(Basic.GREEN)
-        self.image.set_colorkey(Basic.GREEN)
-        
-        if not self.die:
-        
-            if self.direction:
-                self.image.blit(self.go_texture[int(self.frames)], (0, 0))
-            else:
-                self.image.blit(pygame.transform.flip(self.go_texture[int(self.frames)], True, False), (0, 0))
-
-            self.frames += 0.08
-
-            if int(self.frames) == 4:
-                self.frames = 0.0
-
-            if int(self.attack_frames) == 0:
-                if self.direction:
-                    self.rect.x += 1
-                else:
-                    self.rect.x -= 1
-            else:
-                self.attack_frames -= 0.1
-
-                self.image.fill(Basic.GREEN)
-                self.image.set_colorkey(Basic.GREEN)
-                if self.state:
-                    self.image.blit(self.attack_texture[int(self.attack_frames)], (0, 0))
-                else:
-                    self.image.blit(pygame.transform.flip(self.attack_texture[int(self.attack_frames)], True, False), (0, 0))
-
-            if self.direction and ((self.platform[0] + self.platform[2]) - self.widht) + self.world_shift == self.rect.x:
-                self.direction = False
-            elif not self.direction and self.platform[2] + self.world_shift == self.rect.x:
-                self.direction = True
-
-        if self.die and int(self.picture) < 7:
-            self.image.blit(self.die_texture[int(self.picture)], (0, 0))
-            self.picture += 0.2
-
-    def dies(self):
-        self.die = True
-        
-        self.picture = 0
-
-        self.image.fill(Basic.GREEN)
-        self.image.set_colorkey(Basic.GREEN)
-
-    def attack(self, state):
-        self.attack_frames = 6
-        self.state = state
-"""
-
 class Monster(pygame.sprite.Sprite):
     def __init__(self, platform):
 
@@ -449,11 +286,12 @@ class Monster(pygame.sprite.Sprite):
 
         self.change_x = random.randint(5, 20) / 5
 
-        self.lives = 3
+        self.lifes = 3
 
         self.go_texture = []
         self.die_texture = []
         self.attack_texture = []
+        self.stand_texture = []
 
         self.go_texture.append(pygame.transform.scale(self.monster.get_image(19, 82, 32, 36), (self.widht, self.height)))
         self.go_texture.append(pygame.transform.scale(self.monster.get_image(85, 82, 32, 36), (self.widht, self.height)))
@@ -476,6 +314,11 @@ class Monster(pygame.sprite.Sprite):
         self.attack_texture.append(pygame.transform.scale(self.monster.get_image(276, 146, 32, 36), (self.widht, self.height)))
         self.attack_texture.append(pygame.transform.scale(self.monster.get_image(339, 146, 32, 36), (self.widht, self.height)))
         
+        self.stand_texture.append(pygame.transform.scale(self.monster.get_image(19, 18, 32, 36), (self.widht, self.height)))
+        self.stand_texture.append(pygame.transform.scale(self.monster.get_image(83, 18, 32, 36), (self.widht, self.height)))
+        self.stand_texture.append(pygame.transform.scale(self.monster.get_image(148, 18, 32, 36), (self.widht, self.height)))
+        self.stand_texture.append(pygame.transform.scale(self.monster.get_image(212, 18, 32, 36), (self.widht, self.height)))
+
         self.dir = "right"
 
         self.platform = platform
@@ -485,6 +328,11 @@ class Monster(pygame.sprite.Sprite):
         self.shift_x = 0
 
         self.live = True
+
+        self.attack_f = 0
+        self.die_f = 0
+
+        self.dir = False
 
     def set_pos(self):
         self.rect.x = self.platform[0]
@@ -510,12 +358,39 @@ class Monster(pygame.sprite.Sprite):
         
             if self.platform[2] > 64:
                 self.rect.x += self.change_x
-        
-            self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+            
+            if int(self.attack_f) == 0:
+                if int(self.die_f) == 0:
+                    self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+                else:
+                    self.image.blit(self.die_texture[int(self.die_f)], (0, 0))
+                    self.die_f += 0.1
+                    if int(self.die_f) >= 3:
+                        self.die_f = 0
+            else:
+                self.image.blit(pygame.transform.flip(self.attack_texture[int(self.attack_f)], self.dir, False), (0, 0))
+                self.attack_f += 0.1
+                if int(self.attack_f) >= 6:
+                    self.attack_f = 0
+
+        else:
+            if int(self.die_f) > 0:
+                self.image.blit(self.die_texture[int(self.die_f)], (0, 0))
+                self.die_f += 0.1
+                if self.die_f >= 7:
+                    self.die_f = 0
+
+    def hit(self):
+        self.die_f = 1
+        self.lifes -= 1
 
     def die(self):
         self.live = False
-        print(self.live)
+        self.die_f = 1
+
+    def attack(self, dir):
+        self.attack_f = 1
+        self.dir = dir
 
 def gen_platforms(x):
     platforms = []
@@ -537,12 +412,12 @@ def gen_platforms(x):
 
         if i % 2 == 0:
             if place:
-                x = before[0] + before[2]
+                x = before[0] + before[2] + 1
             else:
                 x = before[0] + random.randint(int(before[2] / 2), before[2])
         else:
             if place:
-                x = before[0] - widht
+                x = before[0] - widht - 1
             else:
                 x = before[0] - random.randint(int(widht / 2), widht)
             
@@ -605,7 +480,7 @@ class Level():
         self.flag = Objects.Flag(self.end_point)
         self.objects.add(self.flag)
 
-        lava = Platforms.Lava(offset + 64, 20 * 8 * 32 - 64)
+        lava = Platforms.Lava(offset - 32, 20 * 8 * 32 - 64)
         self.lavas.add(lava)
 
         self.world_shift = 0
