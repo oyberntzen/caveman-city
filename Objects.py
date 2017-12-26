@@ -48,7 +48,6 @@ class coin(pygame.sprite.Sprite):
 
     def pickup(self):
         if self.visible:
-            
             pygame.mixer.Sound.play(self.sound)
             self.visible = False
             self.picknow = True

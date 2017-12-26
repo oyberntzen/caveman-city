@@ -190,10 +190,12 @@ class Player(pygame.sprite.Sprite):
                     if enemy.lifes == 0:
                         pygame.mixer.Sound.play(self.die_sound)
                         enemy.die()
+                        self.extra += 10
                 else:
                     pygame.mixer.Sound.play(self.hit_sound)
                     dir = self.rect.x < enemy.rect.x
                     enemy.attack(dir)
+                    self.extra -= 3
                     if self.rect.x > enemy.rect.x:
                         self.back = 15
                         self.change_y = -5
@@ -334,6 +336,9 @@ class Monster(pygame.sprite.Sprite):
 
         self.dir = False
 
+        self.Attack = False
+        self.Die = False
+
     def set_pos(self):
         self.rect.x = self.platform[0]
         self.rect.y = self.platform[1] - self.height
@@ -343,10 +348,9 @@ class Monster(pygame.sprite.Sprite):
         self.image.set_colorkey(Basic.GREEN)
 
         if self.live:
-            if self.platform[2] > 64:
-                self.go_frames += 0.1
-                if int(self.go_frames) >= 5:
-                    self.go_frames = 0
+            self.go_frames += 0.1
+            if int(self.go_frames) >= 5:
+                self.go_frames = 0
 
             if self.change_x > 0:
                 if self.rect.x + self.widht >= self.platform[0] + self.platform[2] + self.shift_x:
@@ -361,7 +365,13 @@ class Monster(pygame.sprite.Sprite):
             
             if int(self.attack_f) == 0:
                 if int(self.die_f) == 0:
-                    self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+                    if self.platform[2] > 64:
+                        self.image.blit(self.go_texture[int(self.go_frames)], (0, 0))
+                    else:
+                        if self.go_frames >= 4:
+                            self.go_frames = 0
+                        self.image.blit(self.stand_texture[int(self.go_frames)], (0, 0))
+
                 else:
                     self.image.blit(self.die_texture[int(self.die_f)], (0, 0))
                     self.die_f += 0.1
@@ -387,10 +397,24 @@ class Monster(pygame.sprite.Sprite):
     def die(self):
         self.live = False
         self.die_f = 1
+        self.Die = True
 
     def attack(self, dir):
         self.attack_f = 1
         self.dir = dir
+        self.Attack = True
+
+    def check_die(self):
+        if self.Die:
+            self.Die = False
+            return True
+        return False
+
+    def check_attack(self):
+        if self.Attack:
+            self.Attack = False
+            return True
+        return False
 
 def gen_platforms(x):
     platforms = []
@@ -486,7 +510,7 @@ class Level():
         self.world_shift = 0
         self.level_limit = -1000
 
-        self.counter = 0
+        self.extra_time = 0
 
     def shift_world(self, shift_x):
         self.world_shift += shift_x
@@ -522,7 +546,13 @@ class Level():
         self.monsters.update()
         for coin in self.coins:
             if coin.update():
-                self.counter = self.counter + 1
+                self.extra_time += 5
+
+        for monster in self.monsters:
+            if monster.check_attack():
+                self.extra_time -= 4
+            elif monster.check_die():
+                self.extra_time += 10
 
 def main():
 
@@ -562,9 +592,9 @@ def main():
 
     clock = pygame.time.Clock()
 
-    ekstra_time = 0
+    extra_time = 0
     fire_time = 0
-    splash = pygame.mixer.Sound("Textures\\lava.wav")
+    splash = pygame.mixer.Sound("Textures\\lava.flac")
 
     Time = 60
 
@@ -602,11 +632,11 @@ def main():
         if player.fire:
             player.fire = False
             pygame.mixer.Sound.play(splash)
-            ekstra_time += 5
+            extra_time += 5
             
 
         if not player.done:
-            Time = int(60 - (now_time - start_time - level.counter * 5 + ekstra_time))
+            Time = int(60 - (now_time - start_time - level.extra_time + extra_time))
             text.text_counter("TIME: " + str(Time))
 
         if player.rect.right >= (Basic.SCREEN_WIDTH - 200):
