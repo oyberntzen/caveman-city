@@ -40,51 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.left_texture.append(self.spritesheet.get_image(64, 64, 32, 32))
         self.left_texture.append(self.spritesheet.get_image(96, 96, 32, 32))
 
-
-        self.spritesheet2 = Basic.SpriteSheet("Textures\\spritesheet_caveman2.png")
-
-        self.left_texture2 = []
-
-        self.left_texture2.append(self.spritesheet2.get_image(0, 0, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(32, 0, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(64, 0, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(96, 0, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(0, 32, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(32, 32, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(64, 32, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(96, 32, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(0, 64, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(32, 64, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(64, 64, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(96, 64, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(0, 96, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(32, 96, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(64, 64, 32, 32))
-        self.left_texture2.append(self.spritesheet2.get_image(96, 96, 32, 32))
-
-
-        self.spritesheet3 = Basic.SpriteSheet("Textures\\spritesheet_caveman3.png")
-
-        self.left_texture3 = []
-
-        self.left_texture3.append(self.spritesheet3.get_image(0, 0, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(32, 0, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(64, 0, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(96, 0, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(0, 32, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(32, 32, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(64, 32, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(96, 32, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(0, 64, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(32, 64, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(64, 64, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(96, 64, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(0, 96, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(32, 96, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(64, 64, 32, 32))
-        self.left_texture3.append(self.spritesheet3.get_image(96, 96, 32, 32))
-
-        self.extra = 1
+        self.extra = 0
 
         self.frame = 0
 
@@ -142,16 +98,8 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.image.blit(pygame.transform.scale(pygame.transform.flip(self.left_texture[int(self.frame)], True, False), (64, 64)), (0,0))
-            if self.extra == 2:
-                self.image.blit(pygame.transform.scale(pygame.transform.flip(self.left_texture2[int(self.frame)], True, False), (64, 64)), (0,0))
-            elif self.extra == 3:
-                self.image.blit(pygame.transform.scale(pygame.transform.flip(self.left_texture3[int(self.frame)], True, False), (64, 64)), (0,0))
         else:
-            self.image.blit(pygame.transform.scale(self.left_texture[int(self.frame)], (64, 64)), (0,0))
-            if self.extra == 2:
-                self.image.blit(pygame.transform.scale(self.left_texture2[int(self.frame)], (64, 64)), (0,0))
-            elif self.extra == 3:
-                self.image.blit(pygame.transform.scale(self.left_texture3[int(self.frame)], (64, 64)), (0,0))         
+            self.image.blit(pygame.transform.scale(self.left_texture[int(self.frame)], (64, 64)), (0,0))      
 
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platforms, False)
         for block in block_hit_list:
@@ -169,6 +117,7 @@ class Player(pygame.sprite.Sprite):
         flag_hit_list = pygame.sprite.spritecollide(self, self.level.objects, False)
         for i in flag_hit_list:
             self.done = True
+            self.stop()
 
         lava_hit_list = pygame.sprite.spritecollide(self, self.level.lavas, False)
         for i in lava_hit_list:
@@ -234,7 +183,8 @@ class Player(pygame.sprite.Sprite):
             self.change_y = 0
             self.rect.y = Basic.SCREEN_HEIGHT - self.rect.height
         elif self.rect.y <= 0:
-            self.rect.top = 0
+            self.rect.y = 1
+            self.change_y = 0
  
     def jump(self):
 

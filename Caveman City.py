@@ -1,7 +1,6 @@
 import Basic
 import Draw
 import Level
-import time
 import pygame
 
 def main():
@@ -18,13 +17,6 @@ def main():
 
     level = Level.Level()
 
-    text = Draw.Text("TIME: 0.000", 50)
-    text.rect.x = 0
-    text.rect.y = 0
-    level.texts.add(text)
-
-    start_time = time.time()
-
     state = "start"
     now = True
     press = False
@@ -32,9 +24,6 @@ def main():
     done = False
 
     clock = pygame.time.Clock()
-
-    extra_time = 0
-    fire_time = 0
 
     Time = 60
 
@@ -48,15 +37,17 @@ def main():
           
         screen.blit(background, (0, 0))
 
-        level.update()
-
-        now_time = time.time()
-
-        if not level.player.done:
-            Time = int(60 - (now_time - start_time - level.extra_time + extra_time))
-            text.text_counter("TIME: " + str(Time))
-
-        level.draw(screen)
+        if level.state == "play":
+            level.update()
+            level.draw(screen)
+        elif level.state == "win":
+            screen.fill(Basic.GREEN)
+            text = Draw.Text("YOU WON", 100)
+            screen.blit(text.image, (60, 250))
+        elif level.state == "lose":
+            screen.fill(Basic.RED)
+            text = Draw.Text("YOU LOSE", 100)
+            screen.blit(text.image, (30, 250))
                     
         clock.tick(60)
 

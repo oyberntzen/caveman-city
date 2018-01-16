@@ -17,7 +17,7 @@ class coin(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         self.Coin = []
-        self.teller = 0
+        self.counter = 0
         self.Coinsheet = Basic.SpriteSheet("Textures\\coins.png")
 
         self.sound = pygame.mixer.Sound("Textures\\Pickup_Coin.wav")
@@ -35,11 +35,11 @@ class coin(pygame.sprite.Sprite):
         self.image.set_colorkey(Basic.GREEN)
 
         if self.visible:
-            self.image.blit(self.Coin[int(self.teller)], (0, 0))
-            self.teller += 0.1
+            self.image.blit(self.Coin[int(self.counter)], (0, 0))
+            self.counter += 0.15
 
-        if int(self.teller) == 6:
-            self.teller = 0
+        if int(self.counter) == 6:
+            self.counter = 0
 
         if self.picknow:
             self.picknow = False
@@ -65,7 +65,7 @@ class Tree(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-class bottun(pygame.sprite.Sprite):
+class Bottun(pygame.sprite.Sprite):
     def __init__(self, bottun_x, bottun_y, bottun_color, bottun_2, bottun_widht, bottun_height):
         super().__init__()
 

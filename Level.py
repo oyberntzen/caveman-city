@@ -5,6 +5,8 @@ import Player
 import Monster
 import Basic
 import Platforms
+import time
+import Draw
 
 def gen_platforms(x):
     platforms = []
@@ -60,7 +62,14 @@ class Level():
         self.player.rect.x = 340
         self.player.rect.y = Basic.SCREEN_HEIGHT - self.player.rect.height
 
-        self.splash = pygame.mixer.Sound("Textures\\lava.flac")
+        self.text = Draw.Text("TIME: 0.000", 50)
+        self.text.rect.x = 0
+        self.text.rect.y = 0
+        self.texts.add(self.text)
+
+        self.splash = pygame.mixer.Sound("Textures\\lava.wav")
+
+        self.state = "play"
 
         coordinates = []
 
@@ -92,8 +101,6 @@ class Level():
         platform.rect.x = 0
         platform.rect.y = 0
 
-        
-
         self.platforms.add(platform)
 
         self.end_point = 20 * 32 * 8 + offset * 2
@@ -108,6 +115,7 @@ class Level():
         self.level_limit = -1000
 
         self.extra_time = 0
+        self.start_time = time.time()
 
     def shift_world(self, shift_x): 
         self.world_shift += shift_x
@@ -167,9 +175,16 @@ class Level():
             self.player.fire = False
             pygame.mixer.Sound.play(self.splash)
             self.extra_time -= 5
+        
+        if not self.player.done:
+            Time = int(60 - (time.time() - self.start_time - self.extra_time))
+            self.text.text_counter("TIME: " + str(Time))
+            if Time < 0:
+                self.state = "lose"
+
+        elif self.player.change_x == 0:
+            self.state = "win"
 
     def event(self, event):
         if not self.player.done:
             self.player.event(event)
-        else:
-            self.player.stop()

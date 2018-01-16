@@ -115,7 +115,7 @@ class Lava(pygame.sprite.Sprite):
             self.image.blit(self.images[0], (i * 16, 0))
     
     def update(self):
-        self.counter = self.counter + 0.5
+        self.counter = self.counter + 0.3
         if self.counter >= 45:
             self.counter = 0
         for i in range(int(self.length / 16)):
