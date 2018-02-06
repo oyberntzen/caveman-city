@@ -17,7 +17,7 @@ class coin(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         self.Coin = []
-        self.counter = 0
+        self.teller = 0
         self.Coinsheet = Basic.SpriteSheet("Textures\\coins.png")
 
         self.sound = pygame.mixer.Sound("Textures\\Pickup_Coin.wav")
@@ -35,11 +35,11 @@ class coin(pygame.sprite.Sprite):
         self.image.set_colorkey(Basic.GREEN)
 
         if self.visible:
-            self.image.blit(self.Coin[int(self.counter)], (0, 0))
-            self.counter += 0.15
+            self.image.blit(self.Coin[int(self.teller)], (0, 0))
+            self.teller += 0.2
 
-        if int(self.counter) == 6:
-            self.counter = 0
+        if int(self.teller) == 6:
+            self.teller = 0
 
         if self.picknow:
             self.picknow = False

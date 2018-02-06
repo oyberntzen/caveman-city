@@ -67,7 +67,7 @@ class Level():
         self.text.rect.y = 0
         self.texts.add(self.text)
 
-        self.splash = pygame.mixer.Sound("Textures\\lava.wav")
+        self.splash = pygame.mixer.Sound("Textures\\lava.flac")
 
         self.state = "play"
 
