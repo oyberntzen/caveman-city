@@ -17,9 +17,8 @@ def main():
     pygame.display.set_caption("CAVEMAN CITY!")
 
     level = Level.Level()
-    menu = Menus.Menu()
+    manager = Menus.Menu()
 
-    state = "start"
     now = True
     press = False
 
@@ -40,20 +39,17 @@ def main():
         
           
         screen.blit(background, (0, 0))
-        menu.show("start", screen)
-        """
-        if level.state == "play":
+        manager.show(screen)
+
+        if manager.menu == "play":
             level.update()
             level.draw(screen) 
-        elif level.state == "win":
-            screen.fill(Basic.GREEN)
-            text = Draw.Text("YOU WON", 100)
-            screen.blit(text.image, (60, 250))
-        elif level.state == "lose":
-            screen.fill(Basic.RED)
-            text = Draw.Text("YOU LOSE", 100)
-            screen.blit(text.image, (30, 250))
-            """        
+            if level.state == "win":
+                manager.switch("win")
+            elif level.state == "lose":
+                manager.switch("lose")
+                
+            
         clock.tick(60)
 
         pygame.display.flip()

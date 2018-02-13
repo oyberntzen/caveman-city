@@ -3,9 +3,10 @@ import pygame
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN_rare = (111, 109, 81)
-GREEN = (0, 255, 0)
-LIGHT_GREEN = (0, 200, 0)
-RED = (255, 0, 0)
+GREEN = (0, 200, 0)
+LIGHT_GREEN = (0, 255, 0)
+RED = (200, 0, 0)
+LIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
 SCREEN_WIDTH = 800

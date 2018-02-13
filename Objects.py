@@ -66,43 +66,48 @@ class Tree(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 class Bottun(pygame.sprite.Sprite):
-    def __init__(self, bottun_x, bottun_y, bottun_color, bottun_2, bottun_widht, bottun_height):
+    def __init__(self, x, y, color, color2, widht, height):
         super().__init__()
 
-        self.bottun_color = bottun_color
-        self.bottun_2 = bottun_2
-        self.bottun_widht = bottun_widht
-        self.bottun_height = bottun_height
-        self.bottun_x = bottun_x
-        self.bottun_y = bottun_y
-
-
-        self.mouse = pygame.mouse.get_pos()
-        self.click = pygame.mouse.get_pressed()
-        self.image = pygame.Surface([bottun_widht, bottun_height])
-
-        self.rect = self.image.get_rect()
-        self.rect.x = bottun_x
-        self.rect.y = bottun_y
+        self.color = color
+        self.color2 = color2
+        self.widht = widht
+        self.height = height
+        self.x = x
+        self.y = y
 
         self.clicks = False
+        self.over = False
 
     def update(self):
-        self.mouse = pygame.mouse.get_pos()
-        self.click = pygame.mouse.get_pressed()
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
 
-        pygame.draw.rect(self.image,self. bottun_color, (0, 0, self.bottun_widht, self.bottun_height))
-        pygame.draw.rect(self.image, self.bottun_2, (3, 3, self.bottun_widht - 6, self.bottun_height - 6), 2)
-
-        if (self.bottun_x + self.bottun_widht) > self.mouse[0] > self.bottun_x and (self.bottun_height + self.bottun_y) > self.mouse[1] > self.bottun_y:
-            pygame.draw.rect(self.image, self.bottun_2, (0, 0, self.bottun_widht, self.bottun_height))
-            pygame.draw.rect(self.image, self.bottun_color, (3, 3, self.bottun_widht - 6, self.bottun_height - 6), 2)
-            if self.click[0] == 1:
+        if (self.x + self.widht > mouse[0] and mouse[0] > self.x) and (self.height + self.y > mouse[1] and mouse[1] > self.y):
+            self.over = True
+            if click[0] == 1:
                 self.clicks = True
             else:
                 self.clicks = False
         else:
-            self.clicks = False
+            self.over = False
+
+    def show(self, surface):
+        if self.over:
+            pygame.draw.rect(surface, self.color2, (self.x, self.y, self.widht, self.height))
+        else:
+            pygame.draw.rect(surface, self.color, (self.x, self.y, self.widht, self.height))
+
+    def change(self, x, y, color, color2, widht, height):
+        self.color = color
+        self.color2 = color2
+        self.widht = widht
+        self.height = height
+        self.x = x
+        self.y = y
+
+        self.clicks = False
+        self.over = False
 
 class Flag(pygame.sprite.Sprite):
     def __init__(self, x):

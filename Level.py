@@ -67,7 +67,7 @@ class Level():
         self.text.rect.y = 0
         self.texts.add(self.text)
 
-        self.splash = pygame.mixer.Sound("Textures\\lava.flac")
+        self.splash = pygame.mixer.Sound("Textures\\lava.wav")
 
         self.state = "play"
 
@@ -178,7 +178,7 @@ class Level():
         
         if not self.player.done:
             Time = int(60 - (time.time() - self.start_time - self.extra_time))
-            self.text.text_counter("TIME: " + str(Time))
+            self.text.change("TIME: " + str(Time), 50)
             if Time < 0:
                 self.state = "lose"
 

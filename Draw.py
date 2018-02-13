@@ -98,7 +98,9 @@ class Text(pygame.sprite.Sprite):
 
         self.image.blit(pygame.transform.scale(self.getImage, (self.lenght * self.sizes, self.sizes)), (0, 0))
 
-    def text_counter(self, new_text):
+    def change(self, new_text, size):
+        self.sizes = size
+
         self.texts = new_text
         self.image.fill(Basic.GREEN)
         self.image.set_colorkey(Basic.GREEN)
