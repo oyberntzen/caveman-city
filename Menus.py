@@ -39,7 +39,10 @@ class Menu:
             self.button.show(surface)
 
             self.text.change("TRY AGAIN", 45)
-            surface.blit(self.text.image, (Basic.SCREEN_WIDTH / 2 - 187, 360))
+            surface.blit(self.text.image, (Basic.SCREEN_WIDTH / 2 - 195, 360))
+
+            if self.button.clicks:
+                self.menu = "setup"
 
         elif self.menu == "lose":
             surface.fill(Basic.RED)
@@ -52,6 +55,9 @@ class Menu:
 
             self.text.change("TRY AGAIN", 45)
             surface.blit(self.text.image, (Basic.SCREEN_WIDTH / 2 - 195, 360))
+
+            if self.button.clicks:
+                self.menu = "setup"
 
     def switch(self, new):
         self.menu = new

@@ -49,6 +49,12 @@ def gen_platforms(x):
 
 class Level(): 
     def __init__(self):
+        self.state = "play"
+        self.gen_track()
+
+    def gen_track(self):
+        self.splash = pygame.mixer.Sound("Textures\\lava.flac")
+
         self.platforms = pygame.sprite.Group() 
         self.monsters = pygame.sprite.Group()
         self.coins = pygame.sprite.Group()
@@ -66,10 +72,6 @@ class Level():
         self.text.rect.x = 0
         self.text.rect.y = 0
         self.texts.add(self.text)
-
-        self.splash = pygame.mixer.Sound("Textures\\lava.wav")
-
-        self.state = "play"
 
         coordinates = []
 

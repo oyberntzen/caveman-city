@@ -26,7 +26,7 @@ def main():
 
     clock = pygame.time.Clock()
 
-    Time = 60
+    Time = 60 
 
     while not done:
         for event in pygame.event.get():
@@ -48,7 +48,11 @@ def main():
                 manager.switch("win")
             elif level.state == "lose":
                 manager.switch("lose")
-                
+
+        if manager.menu == "setup":
+            level.gen_track()
+            level.state = True
+            manager.switch("play")
             
         clock.tick(60)
 
