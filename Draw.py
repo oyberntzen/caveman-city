@@ -2,7 +2,7 @@ import pygame
 import Basic
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, text, size, width = 0, height = 0):
+    def __init__(self, text, size, width = 0, height = 0, x = 0, y = 0):
         super().__init__()
         self.texts = text
         self.sizes = size
@@ -55,7 +55,7 @@ class Text(pygame.sprite.Sprite):
         self.lenght = len(text)
         self.width = self.lenght * size
         self.height = self.lenght * size
-        
+
         self.getImage = pygame.Surface((self.lenght * 9, 9))
         if width == 0 and height == 0:
             self.image = pygame.Surface((self.width + 500, self.height))
@@ -66,6 +66,8 @@ class Text(pygame.sprite.Sprite):
         self.char_texture = pygame.image.load("Textures\\boxy_bold_font.png")
 
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
         self.char_now = 0
 
@@ -91,7 +93,7 @@ class Text(pygame.sprite.Sprite):
                 self.x_now = self.x_before + (self.check_before[2] + 1)
 
             self.getImage.blit(self.char_texture, (self.x_now, 0), self.check_now)
-                
+
             self.check_before = self.check_now
             self.x_before = self.x_now
             self.char_now += 1
@@ -126,7 +128,7 @@ class Text(pygame.sprite.Sprite):
                 self.x_now = self.x_before + (self.check_before[2] + 1)
 
             self.getImage.blit(self.char_texture, (self.x_now, 0), self.check_now)
-                
+
             self.check_before = self.check_now
             self.x_before = self.x_now
             self.char_now += 1

@@ -36,7 +36,7 @@ def gen_platforms(x):
                 x = before[0] - widht - 1
             else:
                 x = before[0] - random.randint(int(widht / 2), widht)
-            
+
         y = before[1] + 4
         if place:
             height = 1
@@ -47,15 +47,15 @@ def gen_platforms(x):
 
     return platforms
 
-class Level(): 
+class Level():
     def __init__(self):
         self.state = "play"
         self.gen_track()
 
     def gen_track(self):
-        self.splash = pygame.mixer.Sound("Textures\\lava.flac")
+        self.splash = pygame.mixer.Sound("Textures\\lava.wav")
 
-        self.platforms = pygame.sprite.Group() 
+        self.platforms = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.coins = pygame.sprite.Group()
         self.texts = pygame.sprite.Group()
@@ -106,7 +106,7 @@ class Level():
         self.platforms.add(platform)
 
         self.end_point = 20 * 32 * 8 + offset * 2
-        
+
         self.flag = Objects.Flag(self.end_point)
         self.objects.add(self.flag)
 
@@ -119,12 +119,12 @@ class Level():
         self.extra_time = 0
         self.start_time = time.time()
 
-    def shift_world(self, shift_x): 
+    def shift_world(self, shift_x):
         self.world_shift += shift_x
 
         for platform in self.platforms:
             platform.rect.x += shift_x
- 
+
         for enemy in self.monsters:
             enemy.rect.x += shift_x
             enemy.shift_x = self.world_shift
@@ -146,7 +146,7 @@ class Level():
         self.lavas.draw(screen)
         self.monsters.draw(screen)
         screen.blit(self.player.image, (self.player.rect.x, self.player.rect.y))
-        
+
 
     def update(self):
         self.texts.update()
@@ -177,7 +177,7 @@ class Level():
             self.player.fire = False
             pygame.mixer.Sound.play(self.splash)
             self.extra_time -= 5
-        
+
         if not self.player.done:
             Time = int(60 - (time.time() - self.start_time - self.extra_time))
             self.text.change("TIME: " + str(Time), 50)

@@ -15,7 +15,7 @@ class coin(pygame.sprite.Sprite):
 
         self.image = pygame.Surface([width, height])
         self.rect = self.image.get_rect()
-        
+
         self.Coin = []
         self.teller = 0
         self.Coinsheet = Basic.SpriteSheet("Textures\\coins.png")
@@ -36,7 +36,7 @@ class coin(pygame.sprite.Sprite):
 
         if self.visible:
             self.image.blit(self.Coin[int(self.teller)], (0, 0))
-            self.teller += 0.2
+            self.teller += 0.1
 
         if int(self.teller) == 6:
             self.teller = 0
@@ -54,7 +54,7 @@ class coin(pygame.sprite.Sprite):
 
 class Tree(pygame.sprite.Sprite):
     def __init__(self):
-                
+
         super().__init__()
         self.texture2 = pygame.image.load("Textures\\tree.png")
         self.texture2 = pygame.transform.scale(self.texture2, (160, 226))
@@ -124,4 +124,4 @@ class Flag(pygame.sprite.Sprite):
         self.image.fill(Basic.GREEN)
         self.image.set_colorkey(Basic.GREEN)
 
-        self.image.blit(self.flag, (0, 0), (1, 3, 36, 77))        
+        self.image.blit(self.flag, (0, 0), (1, 3, 36, 77))
